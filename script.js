@@ -161,6 +161,79 @@ const displayController = (() => {
     return { showBoard, win, tie, turn, getPlace };
 })();
 
+// display:
+// when hover show a light version of an X or O depending on turn
+// make display work with any num of positions (optional)
+const displayToSite = (() => {
+    const gameGrid = document.getElementsByClassName("game-grid");
+    const box1 = document.getElementById("box1");
+    const box2 = document.getElementById("box2");
+    const box3 = document.getElementById("box3");
+    const box4 = document.getElementById("box4");
+    const box5 = document.getElementById("box5");
+    const box6 = document.getElementById("box6");
+    const box7 = document.getElementById("box7");
+    const box8 = document.getElementById("box8");
+    const box9 = document.getElementById("box9");
+    const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
+    const gameResultText = document.querySelector(".game-result");
+
+    
+
+
+    const updateBoard = (board) => {
+        // to test
+        // board = ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'O'];
+
+        for (let i=0; i<boxIds.length; i++) {
+            while (boxIds[i].firstChild) {
+                boxIds[i].removeChild(boxIds[i].firstChild);
+            }
+
+            if (board[i] == "X") {
+                const xImg = document.createElement('img');
+                xImg.classList.add('X-img');
+                xImg.src = "images/alpha-x.svg";
+                xImg.alt = "X";
+                boxIds[i].appendChild(xImg);
+            } else if (board[i] == "O") {
+                const oImg = document.createElement('img');
+                oImg.classList.add('O-img');
+                oImg.src = "images/alpha-o.svg";
+                oImg.alt = "O";
+                boxIds[i].appendChild(oImg);
+            } else {
+                // do nothing
+            }
+        }
+    }
+
+    const win = (player) => {
+        let name = player.getPlayerName();
+        // console.log(name + ' has won the game!');
+        gameResultText.textContent = name + ' has won the game!';
+    }
+
+    const tie = () => {
+        // console.log("It's a tie!");
+        gameResultText.textContent = "It's a tie!";
+    }
+
+    const turn = (player) => {
+        let name = player.getPlayerName();
+        // console.log('It is ' + name + "'s turn.");
+        gameResultText.textContent = 'It is ' + name + "'s turn.";
+    }
+
+    function getPlace () {
+        const placePosition = prompt('Place your marker (1-9): ');
+        console.log(`You entered: ${placePosition}`);
+        return placePosition-1;
+    }
+
+    return { updateBoard, win, tie, turn, getPlace };
+})();
+
 const game = (() => {
     let player1 = Player("Ali", "X", true);
     let player1name = player1.getPlayerName();
@@ -192,11 +265,13 @@ const game = (() => {
     const playTurn = () => {
         if (player1turn == true) {
             displayController.turn(player1);
+            displayToSite.turn(player1);
             updateBoardGetPosition();
             board.place(placePosition, player1marker);
             switchTurns();
         } else if (player2turn == true) {
             displayController.turn(player2);
+            displayToSite.turn(player2);
             updateBoardGetPosition();
             board.place(placePosition, player2marker);
             switchTurns();
@@ -215,7 +290,9 @@ const game = (() => {
 
     const updateBoardGetPosition = () => {
         displayController.showBoard(boardArray);
+        displayToSite.updateBoard(boardArray);
         placePosition = displayController.getPlace();
+
     }
 
     const switchTurns = () => {
@@ -225,12 +302,19 @@ const game = (() => {
 
     const endGame = (() => {
         displayController.showBoard(boardArray);
+        displayToSite.updateBoard(boardArray);
         if (winMarker == player1marker) {
             displayController.win(player1);
+            displayToSite.updateBoard(boardArray);
+            displayToSite.win(player1);
         } else if (winMarker == player2marker) {
             displayController.win(player2);
+            displayToSite.updateBoard(boardArray);
+            displayToSite.win(player2);
         } else if (winMarker == 'tie') {
             displayController.tie();
+            displayToSite.updateBoard(boardArray);
+            displayToSite.tie();
         } else {
             console.error("There is no winner or tie?");
         }
@@ -238,8 +322,9 @@ const game = (() => {
 
     const newGame = (() => {
         board.empty();
-        resetGameVariables(player1name, player1marker, player1turn,
-                           player2name, player2marker, player2turn);
+        // resetGameVariables(player1name, player1marker, player1turn,
+        //                    player2name, player2marker, player2turn);
+        resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
         play();
     });
 
@@ -261,73 +346,3 @@ const game = (() => {
     return { play, newGame, boardArray };
 })();
 
-// display:
-// when hover show a light version of an X or O depending on turn
-// make display work with any num of positions (optional)
-const displayToSite = (() => {
-    const gameGrid = document.getElementsByClassName("game-grid");
-    const box1 = document.getElementById("box1");
-    const box2 = document.getElementById("box2");
-    const box3 = document.getElementById("box3");
-    const box4 = document.getElementById("box4");
-    const box5 = document.getElementById("box5");
-    const box6 = document.getElementById("box6");
-    const box7 = document.getElementById("box7");
-    const box8 = document.getElementById("box8");
-    const box9 = document.getElementById("box9");
-    const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
-    const gameResultText = document.querySelector(".game-result");
-
-    
-
-
-    const updateBoard = (board) => {
-        // to test
-        board = ["X", "X", "O", "X", "X", "O", "X", "X", "O"];
-
-        for (let i=0; i<boxIds.length; i++) {
-            if (board[i] == "X") {
-                const xImg = document.createElement('img');
-                xImg.classList.add('X-img');
-                xImg.src = "images/alpha-x.svg";
-                xImg.alt = "X";
-                boxIds[i].appendChild(xImg);
-            } else if (board[i] == "O") {
-                const oImg = document.createElement('img');
-                oImg.classList.add('O-img');
-                oImg.src = "images/alpha-o.svg";
-                oImg.alt = "O";
-                boxIds[i].appendChild(oImg);
-            } else {
-                // do nothing
-            }
-        }
-    }
-
-    const win = (player) => {
-        let name = player.getPlayerName();
-        // console.log(name + ' has won the game!');
-        let result = name + ' has won the game!'
-        gameResultText.textContent = result;
-    }
-
-    const tie = () => {
-        // console.log("It's a tie!");
-        gameResultText.textContent = "It's a tie!";
-    }
-
-    const turn = (player) => {
-        let name = player.getPlayerName();
-        // console.log('It is ' + name + "'s turn.");
-        let result = 'It is ' + name + "'s turn.";
-        gameResultText.textContent = result;
-    }
-
-    function getPlace () {
-        const placePosition = prompt('Place your marker (1-9): ');
-        console.log(`You entered: ${placePosition}`);
-        return placePosition-1;
-    }
-
-    return { updateBoard, win, tie, turn, getPlace };
-})();
