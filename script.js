@@ -258,5 +258,76 @@ const game = (() => {
         gameOver = false;
     }) 
 
-    return { play, newGame };
+    return { play, newGame, boardArray };
+})();
+
+// display:
+// when hover show a light version of an X or O depending on turn
+// make display work with any num of positions (optional)
+const displayToSite = (() => {
+    const gameGrid = document.getElementsByClassName("game-grid");
+    const box1 = document.getElementById("box1");
+    const box2 = document.getElementById("box2");
+    const box3 = document.getElementById("box3");
+    const box4 = document.getElementById("box4");
+    const box5 = document.getElementById("box5");
+    const box6 = document.getElementById("box6");
+    const box7 = document.getElementById("box7");
+    const box8 = document.getElementById("box8");
+    const box9 = document.getElementById("box9");
+    const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
+    const gameResultText = document.querySelector(".game-result");
+
+    
+
+
+    const updateBoard = (board) => {
+        // to test
+        board = ["X", "X", "O", "X", "X", "O", "X", "X", "O"];
+
+        for (let i=0; i<boxIds.length; i++) {
+            if (board[i] == "X") {
+                const xImg = document.createElement('img');
+                xImg.classList.add('X-img');
+                xImg.src = "images/alpha-x.svg";
+                xImg.alt = "X";
+                boxIds[i].appendChild(xImg);
+            } else if (board[i] == "O") {
+                const oImg = document.createElement('img');
+                oImg.classList.add('O-img');
+                oImg.src = "images/alpha-o.svg";
+                oImg.alt = "O";
+                boxIds[i].appendChild(oImg);
+            } else {
+                // do nothing
+            }
+        }
+    }
+
+    const win = (player) => {
+        let name = player.getPlayerName();
+        // console.log(name + ' has won the game!');
+        let result = name + ' has won the game!'
+        gameResultText.textContent = result;
+    }
+
+    const tie = () => {
+        // console.log("It's a tie!");
+        gameResultText.textContent = "It's a tie!";
+    }
+
+    const turn = (player) => {
+        let name = player.getPlayerName();
+        // console.log('It is ' + name + "'s turn.");
+        let result = 'It is ' + name + "'s turn.";
+        gameResultText.textContent = result;
+    }
+
+    function getPlace () {
+        const placePosition = prompt('Place your marker (1-9): ');
+        console.log(`You entered: ${placePosition}`);
+        return placePosition-1;
+    }
+
+    return { updateBoard, win, tie, turn, getPlace };
 })();
