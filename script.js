@@ -20,6 +20,7 @@ const gameBoard = () => {
             case (position>positions-1 || position<0):
                 console.warn("The position you entered is out of range. Try again");
                 let newPosition = displayController.getPlace();
+                // let newPosition = displayToSite.placeMarker();
                 place(newPosition, marker);
                 break;
             default:
@@ -27,7 +28,9 @@ const gameBoard = () => {
                     board[position] = marker;
                 } else {
                     console.warn("The spot has already been filled. Try again");
+                    
                     let newPosition = displayController.getPlace();
+                    // let newPosition = displayToSite.placeMarker();
                     place(newPosition, marker);
                 }
                 break;
@@ -94,7 +97,7 @@ const gameBoard = () => {
         }
         
         inARow = 1;
-        for (let j=(rows*2)-1; j<positions; j+=(rows-1)) {
+        for (let j=rows+1; j<positions; j+=(rows-1)) {
             marker = board[j];
             if (marker == board[j-(rows-1)] && marker != null) {
                 inARow++;
@@ -179,9 +182,6 @@ const displayToSite = (() => {
     const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
     const gameResultText = document.querySelector(".game-result");
 
-    
-
-
     const updateBoard = (board) => {
         // to test
         // board = ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'O'];
@@ -226,13 +226,22 @@ const displayToSite = (() => {
         gameResultText.textContent = 'It is ' + name + "'s turn.";
     }
 
-    function getPlace () {
-        const placePosition = prompt('Place your marker (1-9): ');
-        console.log(`You entered: ${placePosition}`);
-        return placePosition-1;
+    function placeMarker () {
+        let position = null;
+        gameResultText.textContent += " Click on a square to place marker";
+        boxIds.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                position = index;
+            })
+        });
+
+        if (position !== null) {
+            return position;
+        }
+
     }
 
-    return { updateBoard, win, tie, turn, getPlace };
+    return { updateBoard, win, tie, turn, placeMarker };
 })();
 
 const game = (() => {
@@ -254,13 +263,18 @@ const game = (() => {
 
 
     function play() {
-        playTurn();
-        checkGameOver();
-        if (winMarker == undefined) {
-            play();
+        if (gameOver[0]) {
+            newGame();
         } else {
-            endGame();
+            playTurn();
+            checkGameOver();
+            if (winMarker == undefined) {
+                play();
+            } else {
+                endGame();
+            }
         }
+        
     }
 
     const playTurn = () => {
@@ -293,6 +307,7 @@ const game = (() => {
         displayController.showBoard(boardArray);
         displayToSite.updateBoard(boardArray);
         placePosition = displayController.getPlace();
+        // placePosition = displayToSite.placeMarker();
 
     }
 

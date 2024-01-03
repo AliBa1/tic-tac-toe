@@ -28,6 +28,10 @@ body {
     border: 4px rgb(255, 85, 0) solid;
 }
 
+.grid-box:hover {
+    background-color: rgba(0, 255, 255, 0.361);
+}
+
 .X-img, .O-img{
     width: 100%;
     height: 100%;
