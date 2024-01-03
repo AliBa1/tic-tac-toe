@@ -1,4 +1,4 @@
-// check game tie (testing)
+// fix game tie
 // add functions to check gameboard vars
 // fix if placing at same position
 // fix checkWin
@@ -12,7 +12,13 @@ const gameBoard = () => {
     let winningMarker;
 
     const empty = () => {
-        board = new Array(positions);
+        // board = new Array(positions);
+        for (let i = 0; i<positions; i++) {
+            board[i] = null;
+        }
+        // console.log(board);
+
+
     }
 
     const place = (position, marker) => {
@@ -146,7 +152,10 @@ const gameBoard = () => {
     //     }
     // }
 
-    return{ board, winningMarker, empty, place, checkWin };
+    const getBoard = () => { return board; }
+
+
+    return{ board, winningMarker, getBoard, empty, place, checkWin };
 };
 
 const Player = (name, marker, turn) => {
@@ -204,7 +213,8 @@ const game = (() => {
     let player2turn = player2.getPlayerTurn();
 
     let board = gameBoard();
-    let boardArray = board.board;
+    // let boardArray = board.board;
+    let boardArray = board.getBoard();
     let winMarker = board.winningMarker;
     let placePosition;
     let gameOver = false;
@@ -308,8 +318,20 @@ const game = (() => {
 
     const newGame = (() => {
         board.empty();
-        // player1turn = true;
-        // player2turn = false;
+
+        player1 = Player(player1name, player1marker, true);
+        player1name = player1.getPlayerName();
+        player1marker = player1.getPlayerMarker();
+        player1turn = player1.getPlayerTurn();
+        player2 = Player(player2name, player2marker, false);
+        player2name = player2.getPlayerName();
+        player2marker = player2.getPlayerMarker();
+        player2turn = player2.getPlayerTurn();
+        board = gameBoard();
+        boardArray = board.getBoard();
+        winMarker = board.winningMarker;
+        gameOver = false;
+
         play();
     // }, 5000);
     });
