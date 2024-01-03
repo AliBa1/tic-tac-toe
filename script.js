@@ -1,42 +1,20 @@
-// add functions to check gameboard vars
-// rename newGame to setupGame and allow to pass in values for variables
-
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
     const positions = rows*columns;
 
-    // let board = new Array(positions);
     let board = Array.from({ length: positions }, () => null);
-    // let board = [null, null, null, null, null, null, null, null, null];
     let winningMarker;
 
+    const getBoard = () => { return board; }
+    const getWinningMarker = () => { return winningMarker; }
+
     const empty = () => {
-        // board = new Array(positions);
-        for (let i = 0; i<positions; i++) {
-            board[i] = null;
-        }
-        // console.log(board);
-
-
+        board = Array.from({ length: positions }, () => null);
     }
 
     const place = (position, marker) => {
         position = Number(position);
-        // if (position>positions-1 || position<0) {
-        //     console.warn("The position you entered is out of range. Try again");
-        //     let newPosition = displayController.getPlace();
-        //     place(newPosition, marker);
-        // } else {
-        //     if (board[position] == null){
-        //         board[position] = marker;
-        //     } else {
-        //         console.warn("The spot has already been filled. Try again");
-        //         let newPosition = displayController.getPlace();
-        //         place(newPosition, marker);
-        //     }
-        // }
-
         switch (true) {
             case (position>positions-1 || position<0):
                 console.warn("The position you entered is out of range. Try again");
@@ -53,12 +31,10 @@ const gameBoard = () => {
                 }
                 break;
 
-        }
-        
-        
+        }     
     }
 
-    // returns array with bool, winningMarker if true
+    // returns array with [bool, winningMarker] if true
     const checkWin = (marker1, marker2) => {
         // check each row, column, and cross for a win
         let inARow = 1;
@@ -112,7 +88,6 @@ const gameBoard = () => {
             if (inARow == rows) {
                 winningMarker = marker;
                 console.warn("Win by cross");
-                console.warn(winningMarker);
                 return [true, winningMarker];
             }
         }
@@ -127,7 +102,6 @@ const gameBoard = () => {
             if (inARow == rows) {
                 winningMarker = marker;
                 console.warn("Win by cross");
-                console.warn(winningMarker);
                 return [true, winningMarker];
             }
         }
@@ -142,21 +116,9 @@ const gameBoard = () => {
         }
         
         return false;
-
     }
 
-    // const getWinMarker = (value) => { 
-    //     if (value == undefined) {
-    //         return winningMarker; 
-    //     } else {
-    //         return value;
-    //     }
-    // }
-
-    const getBoard = () => { return board; }
-
-
-    return{ board, winningMarker, getBoard, empty, place, checkWin };
+    return{ getBoard, getWinningMarker, empty, place, checkWin };
 };
 
 const Player = (name, marker, turn) => {
@@ -172,24 +134,21 @@ const Player = (name, marker, turn) => {
 };
 
 const displayController = (() => {
-    const showTable = (board) => {
+    const showBoard = (board) => {
         console.log(board);
     }
 
-    const win = (Player) => {
-        let name = Player.getPlayerName();
+    const win = (player) => {
+        let name = player.getPlayerName();
         console.log(name + ' has won the game!');
-        // gameBoard.empty();
     }
 
     const tie = () => {
         console.log("It's a tie!");
-        // gameBoard.empty();
-
     }
 
-    const playerTurn = (name) => {
-        // let name = Player.getPlayerName();
+    const turn = (player) => {
+        let name = player.getPlayerName();
         console.log('It is ' + name + "'s turn.");
     }
 
@@ -199,7 +158,7 @@ const displayController = (() => {
         return placePosition-1;
     }
 
-    return { showTable, win, tie, playerTurn, getPlace };
+    return { showBoard, win, tie, turn, getPlace };
 })();
 
 const game = (() => {
@@ -214,78 +173,33 @@ const game = (() => {
     let player2turn = player2.getPlayerTurn();
 
     let board = gameBoard();
-    // let boardArray = board.board;
     let boardArray = board.getBoard();
-    let winMarker = board.winningMarker;
+    let winMarker = board.getWinningMarker();
     let placePosition;
     let gameOver = false;
 
 
     function play() {
-        // if (turn == player1name) {
-        //     displayController.playerTurn(player1name);
-        //     displayController.showTable(boardArray);
-        //     placePosition = displayController.getPlace();
-        //     board.place(placePosition, player1marker);
-
-        //     if (board.checkWin() == true) {
-        //         displayController.showTable(boardArray);
-        //         displayController.win();
-        //         // add more
-        //         newGame();
-        //     } else {
-        //         turn = player2name;
-        //         play();
-        //     }
-        // }
-
-        // if (turn == player2name) {
-        //     displayController.playerTurn(player2name);
-        //     displayController.showTable(boardArray);
-        //     let placePosition = displayController.getPlace();
-        //     board.place(placePosition, player2marker);
-        //     if (board.checkWin() == true) {
-        //         displayController.showTable(boardArray);
-        //         displayController.win();
-        //         // add more
-        //         newGame();
-        //     } else {
-        //         turn = player1name;
-        //     }
-        // }
-
-        // while (winMarker == undefined) {
-        //     playTurn();
-        //     checkGameOver();
-        // }
-            playTurn();
-            checkGameOver();
-            if (winMarker == undefined) {
-                play();
-            } else {
-                endGame();
-            }
+        playTurn();
+        checkGameOver();
+        if (winMarker == undefined) {
+            play();
+        } else {
+            endGame();
+        }
     }
 
     const playTurn = () => {
         if (player1turn == true) {
-            displayController.playerTurn(player1name);
-            displayController.showTable(boardArray);
-            placePosition = displayController.getPlace();
+            displayController.turn(player1);
+            updateBoardGetPosition();
             board.place(placePosition, player1marker);
-            // player1.turn = false;
-            // player2.turn = true;
-            player1turn = false;
-            player2turn = true;
+            switchTurns();
         } else if (player2turn == true) {
-            displayController.playerTurn(player2name);
-            displayController.showTable(boardArray);
-            let placePosition = displayController.getPlace();
+            displayController.turn(player2);
+            updateBoardGetPosition();
             board.place(placePosition, player2marker);
-            // player1.turn = true;
-            // player2.turn = false;
-            player1turn = true;
-            player2turn = false;
+            switchTurns();
         } else {
             console.error("No player has a turn!");
         }
@@ -295,15 +209,22 @@ const game = (() => {
     const checkGameOver = () => {
         gameOver = board.checkWin();
         if (gameOver[0]) {
-            // winMarker = board.winningMarker;
             winMarker = gameOver[1];
-            console.warn(winMarker);
-            // endGame();
         }
     }
 
+    const updateBoardGetPosition = () => {
+        displayController.showBoard(boardArray);
+        placePosition = displayController.getPlace();
+    }
+
+    const switchTurns = () => {
+        player1turn = !player1turn;
+        player2turn = !player2turn;
+    }
+
     const endGame = (() => {
-        displayController.showTable(boardArray);
+        displayController.showBoard(boardArray);
         if (winMarker == player1marker) {
             displayController.win(player1);
         } else if (winMarker == player2marker) {
@@ -313,29 +234,29 @@ const game = (() => {
         } else {
             console.error("There is no winner or tie?");
         }
-
-        // newGame();
     })
 
     const newGame = (() => {
         board.empty();
+        resetGameVariables(player1name, player1marker, player1turn,
+                           player2name, player2marker, player2turn);
+        play();
+    });
 
-        player1 = Player(player1name, player1marker, true);
+    const resetGameVariables = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
+        player1 = Player(p1name, p1marker, p1turn);
         player1name = player1.getPlayerName();
         player1marker = player1.getPlayerMarker();
         player1turn = player1.getPlayerTurn();
-        player2 = Player(player2name, player2marker, false);
+        player2 = Player(p2name, p2marker, p2turn);
         player2name = player2.getPlayerName();
         player2marker = player2.getPlayerMarker();
         player2turn = player2.getPlayerTurn();
         board = gameBoard();
         boardArray = board.getBoard();
-        winMarker = board.winningMarker;
+        winMarker = board.getWinningMarker();
         gameOver = false;
-
-        play();
-    // }, 5000);
-    });
+    }) 
 
     return { play, newGame };
 })();
