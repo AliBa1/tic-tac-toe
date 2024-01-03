@@ -1,14 +1,14 @@
-// fix game tie
 // add functions to check gameboard vars
-// fix if placing at same position
-// fix checkWin
+// rename newGame to setupGame and allow to pass in values for variables
 
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
     const positions = rows*columns;
 
-    let board = new Array(positions);
+    // let board = new Array(positions);
+    let board = Array.from({ length: positions }, () => null);
+    // let board = [null, null, null, null, null, null, null, null, null];
     let winningMarker;
 
     const empty = () => {
@@ -133,8 +133,9 @@ const gameBoard = () => {
         }
 
         // check if tied when board full
-        const boardNotFull = board.some(element => element === null);
-        if (winningMarker == null && boardNotFull) {
+        // const boardNotFull = board.some(element => element === null);
+        const boardFull = board.every(element => element !== null);
+        if (winningMarker == undefined && boardFull) {
             winningMarker = 'tie';
             console.warn("Tied");
             return [true, winningMarker];
