@@ -18,8 +18,8 @@ const gameBoard = () => {
         switch (true) {
             case (position>positions-1 || position<0):
                 console.warn("The position you entered is out of range. Try again");
-                // let newPosition = displayController.getPlace();
-                let newPosition = displayToSite.placeMarker();
+                let newPosition = displayController.getPlace();
+                // let newPosition = displayToSite.getPlace();
                 place(newPosition, marker);
                 break;
             default:
@@ -28,14 +28,15 @@ const gameBoard = () => {
                 } else {
                     console.warn("The spot has already been filled. Try again");
                     
-                    // let newPosition = displayController.getPlace();
-                    let newPosition = displayToSite.placeMarker();
+                    let newPosition = displayController.getPlace();
+                    // let newPosition = displayToSite.getPlace();
                     place(newPosition, marker);
                 }
                 break;
 
         }     
     }
+    
 
     // returns array with [bool, winningMarker] if true
     const checkWin = (marker1, marker2) => {
@@ -225,19 +226,18 @@ const displayToSite = (() => {
         gameResultText.textContent = 'It is ' + name + "'s turn.";
     }
 
-    function placeMarker () {
-        let position;
-        gameResultText.textContent += " Click on a square to place marker";
-        boxIds.forEach((box, index) => {
-            box.addEventListener("click", () => {
-                position = index;
-            })
-        });
+    function getPlace () {
+        // let position;
+        // boxIds.forEach((box, index) => {
+        //     box.addEventListener("click", () => {
+        //         position = index;
+        //     })
+        // });
 
-        return position;
+        // return position;
     }
 
-    return { updateBoard, win, tie, turn, placeMarker };
+    return { updateBoard, win, tie, turn, getPlace };
 })();
 
 const game = (() => {
@@ -302,9 +302,8 @@ const game = (() => {
     const updateBoardGetPosition = () => {
         displayController.showBoard(boardArray);
         displayToSite.updateBoard(boardArray);
-        // placePosition = displayController.getPlace();
-        placePosition = displayToSite.placeMarker();
-
+        placePosition = displayController.getPlace();
+        // placePosition = displayToSite.getPlace();
     }
 
     const switchTurns = () => {
