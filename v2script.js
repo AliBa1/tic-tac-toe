@@ -1,5 +1,3 @@
-// fix game end in site
-// fix placing object in same square multiple times
 // clean up code
 const gameBoard = () => {
     const rows = 3;
@@ -18,27 +16,35 @@ const gameBoard = () => {
 
     const place = (position, marker) => {
         position = Number(position);
-        switch (true) {
-            case (position>positions-1 || position<0):
-                console.warn("The position you entered is out of range. Try again");
-                // let newPosition = displayController.getPlace();
-                // let newPosition = displayToSite.getPlace();
-                place(newPosition, marker);
-                break;
-            default:
-                console.warn(board[position]);
-                if (board[position] == null){
-                    board[position] = marker;
-                } else {
-                    console.warn("The spot has already been filled. Try again");
+        // switch (true) {
+        //     case (position>positions-1 || position<0):
+        //         console.warn("The position you entered is out of range. Try again");
+        //         // let newPosition = displayController.getPlace();
+        //         // let newPosition = displayToSite.getPlace();
+        //         place(newPosition, marker);
+        //         break;
+        //     default:
+        //         if (board[position] == null){
+        //             board[position] = marker;
+        //         } else {
+        //             console.warn("The spot has already been filled. Try again");
                     
-                    // let newPosition = displayController.getPlace();
-                    // let newPosition = displayToSite.getPlace();
-                    place(newPosition, marker);
-                }
-                break;
+        //             // let newPosition = displayController.getPlace();
+        //             // let newPosition = displayToSite.getPlace();
+        //             place(newPosition, marker);
+        //         }
+        //         break;
+        // }     
 
-        }     
+        if (board[position] == null){
+            board[position] = marker;
+        } else {
+            console.warn("The spot has already been filled. Try again");
+            
+            // let newPosition = displayController.getPlace();
+            // let newPosition = displayToSite.getPlace();
+            place(newPosition, marker);
+        }
     }
     
 
@@ -274,7 +280,6 @@ const game = (() => {
     }
 
     const endGame = (() => {
-        displayController.updateBoard(boardArray);
         if (winMarker == player1marker) {
             displayController.win(player1);
         } else if (winMarker == player2marker) {
@@ -335,6 +340,7 @@ const game = (() => {
     };
 
     const play = (() => {
+        newGame();
         displayController.restartButton.addEventListener("click", () => {
             newGame();
         });
@@ -353,7 +359,11 @@ const game = (() => {
         //     });
         // });
         displayController.boxIds.forEach((box, index) => {
-            box.addEventListener("click", () => boxClicked(index));
+            box.addEventListener("click", () => {
+                if (winMarker == undefined) {
+                    boxClicked(index);
+                }
+            });
         });
         
 
