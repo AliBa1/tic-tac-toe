@@ -1,4 +1,3 @@
-// clean up code
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
@@ -40,16 +39,13 @@ const gameBoard = () => {
             board[position] = marker;
         } else {
             console.warn("The spot has already been filled. Try again");
-            
-            // let newPosition = displayController.getPlace();
-            // let newPosition = displayToSite.getPlace();
             place(newPosition, marker);
         }
     }
     
 
     // returns array with [bool, winningMarker] if true
-    const checkWin = (marker1, marker2) => {
+    const checkWin = () => {
         // check each row, column, and cross for a win
         let inARow = 1;
         let marker;
@@ -147,8 +143,6 @@ const Player = (name, marker, turn) => {
     return { getPlayerName, getPlayerMarker, getPlayerTurn };
 };
 
-// display:
-// make display work with any num of positions (optional)
 const displayController = (() => {
     const gameGrid = document.getElementsByClassName("game-grid");
     const box1 = document.getElementById("box1");
@@ -165,8 +159,6 @@ const displayController = (() => {
     const gameResultText = document.querySelector(".game-result");
 
     const updateBoard = (board) => {
-        // to test
-        // board = ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'O'];
         console.log(board);
 
         for (let i=0; i<boxIds.length; i++) {
@@ -186,8 +178,6 @@ const displayController = (() => {
                 oImg.src = "images/alpha-o.svg";
                 oImg.alt = "O";
                 boxIds[i].appendChild(oImg);
-            } else {
-                // do nothing
             }
         }
     }
@@ -229,50 +219,12 @@ const game = (() => {
     let placePosition;
     let gameOver = false;
 
-
-    // function play() {
-    //     if (gameOver[0]) {
-    //         newGame();
-    //     } else {
-    //         playTurn();
-    //         checkGameOver();
-    //         if (winMarker == undefined) {
-    //             play();
-    //         } else {
-    //             endGame();
-    //         }
-    //     }
-    // }
-
-    // const playTurn = () => {
-    //     if (player1turn == true) {
-    //         displayController.turn(player1);
-    //         updateBoardGetPosition();
-    //         board.place(placePosition, player1marker);
-    //         switchTurns();
-    //     } else if (player2turn == true) {
-    //         displayController.turn(player2);
-    //         updateBoardGetPosition();
-    //         board.place(placePosition, player2marker);
-    //         switchTurns();
-    //     } else {
-    //         console.error("No player has a turn!");
-    //     }
-
-    // }
-
     const checkGameOver = () => {
         gameOver = board.checkWin();
         if (gameOver[0]) {
             winMarker = gameOver[1];
         }
     }
-
-    // const updateBoardGetPosition = () => {
-    //     displayController.updateBoard(boardArray);
-    //     // placePosition = displayController.getPlace();
-    //     // placePosition = displayToSite.getPlace();
-    // }
 
     const switchTurns = () => {
         player1turn = !player1turn;
@@ -292,16 +244,10 @@ const game = (() => {
     })
 
     const newGame = (() => {
-        // displayController.boxIds.forEach((box, index) => {
-        //     box.removeEventListener("click", () => handleBoxClick(index));
-        // });
-
         console.warn("Starting new gane");
         resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
         displayController.updateBoard(boardArray);
         showTurn();
-
-        // play();
     });
 
     const showTurn = () => {
@@ -323,7 +269,6 @@ const game = (() => {
             showTurn();
         } else {
             endGame();
-            // newGame();
         }
     })
 
@@ -345,19 +290,6 @@ const game = (() => {
             newGame();
         });
 
-        // displayController.boxIds.forEach((box, index) => {
-        //     box.addEventListener("click", () => {
-        //         placePosition = index;
-
-        //         if (player1turn == true) {
-        //             playTurn(player1, player1marker);
-        //         } else if (player2turn == true) {
-        //             playTurn(player2, player2marker);
-        //         } else {
-        //             console.error("No player has a turn!");
-        //         }
-        //     });
-        // });
         displayController.boxIds.forEach((box, index) => {
             box.addEventListener("click", () => {
                 if (winMarker == undefined) {
@@ -365,9 +297,6 @@ const game = (() => {
                 }
             });
         });
-        
-
-        // play();
     });
 
     const resetGameVariables = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
@@ -386,7 +315,7 @@ const game = (() => {
         gameOver = false;
     }) 
 
-    return { play, newGame };
+    return { play  };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
