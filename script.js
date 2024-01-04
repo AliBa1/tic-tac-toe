@@ -1,3 +1,5 @@
+// fix game end in site
+// fix placing object in same square multiple times
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
@@ -277,7 +279,6 @@ const game = (() => {
                 endGame();
             }
         }
-        
     }
 
     const playTurn = () => {
@@ -319,19 +320,19 @@ const game = (() => {
     }
 
     const endGame = (() => {
-        displayController.showBoard(boardArray);
-        displayToSite.updateBoard(boardArray);
+        // displayController.showBoard(boardArray);
+        // displayToSite.updateBoard(boardArray);
         if (winMarker == player1marker) {
-            displayController.win(player1);
-            displayToSite.updateBoard(boardArray);
+            // displayController.win(player1);
+            // displayToSite.updateBoard(boardArray);
             displayToSite.win(player1);
         } else if (winMarker == player2marker) {
-            displayController.win(player2);
-            displayToSite.updateBoard(boardArray);
+            // displayController.win(player2);
+            // displayToSite.updateBoard(boardArray);
             displayToSite.win(player2);
         } else if (winMarker == 'tie') {
-            displayController.tie();
-            displayToSite.updateBoard(boardArray);
+            // displayController.tie();
+            // displayToSite.updateBoard(boardArray);
             displayToSite.tie();
         } else {
             console.error("There is no winner or tie?");
@@ -345,6 +346,44 @@ const game = (() => {
         resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
 
         play();
+    });
+
+    const playTurnSite = ((player, playerMarker) => {
+        // displayController.turn(player);
+        displayToSite.turn(player);
+        board.place(placePosition, playerMarker);
+        // displayController.showBoard(boardArray);
+        displayToSite.updateBoard(boardArray);
+        switchTurns();
+        checkGameOver();
+        if (winMarker != undefined) {
+            endGame();
+            playInSite();
+        }
+    })
+
+    const playInSite = (() => {
+        board.empty();
+        displayToSite.updateBoard(boardArray);
+        resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
+        
+        displayToSite.boxIds.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                placePosition = index;
+
+                if (player1turn == true) {
+                    playTurnSite(player1, player1marker);
+                } else if (player2turn == true) {
+                    playTurnSite(player2, player2marker);
+                } else {
+                    console.error("No player has a turn!");
+                }
+            });
+        });
+
+        
+
+        // play();
     });
 
     const resetGameVariables = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
@@ -362,9 +401,10 @@ const game = (() => {
         gameOver = false;
     }) 
 
-    return { play, newGame, boardArray };
+    return { play, newGame, boardArray, playInSite };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-    game.play();
+    // game.play();
+    game.playInSite();
 });
