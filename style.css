@@ -11,8 +11,7 @@ table { border-collapse: collapse; border-spacing: 0;}
 
 
 body {
-    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
-    font-family: 'Press Start 2P', sans-serif;
+    font-family: 'Press Start 2P', 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .hide {
@@ -27,14 +26,12 @@ form {
 }
 
 form > p {
-    /* text-align: center; */
     font-size: 1.5rem;
 }
 
 fieldset {
     display: flex;
     margin-top: 2rem;
-    /* border: 1px red solid; */
     justify-content: space-between;
     width: 32rem;
     height: 4rem;
@@ -51,6 +48,11 @@ label {
 
 .form-field > label, legend {
     margin-bottom: 0.5rem;
+}
+
+.form-field > input {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 1rem;
 }
 
 form > button {
@@ -98,14 +100,10 @@ form > button {
 .X-img, .O-img{
     width: 100%;
     height: 100%;
-    /* border: 1px green solid; */
 }
 
 .game-result {
-    /* display: flex;
-    align-items: center; */
     text-align: center;
-    /* border: 1px red solid; */
     margin-top: 4rem;
     font-size: 2.5rem;
 }

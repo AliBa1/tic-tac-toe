@@ -1,8 +1,3 @@
-// fix game end in site
-// fix placing object in same square multiple times
-// fix display turn
-// could have reset button
-// clean up code
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
@@ -19,32 +14,19 @@ const gameBoard = () => {
     }
 
     const place = (position, marker) => {
-        position = Number(position);
-        switch (true) {
-            case (position>positions-1 || position<0):
-                console.warn("The position you entered is out of range. Try again");
-                let newPosition = displayController.getPlace();
-                // let newPosition = displayToSite.getPlace();
-                place(newPosition, marker);
-                break;
-            default:
-                if (board[position] == null){
-                    board[position] = marker;
-                } else {
-                    console.warn("The spot has already been filled. Try again");
-                    
-                    let newPosition = displayController.getPlace();
-                    // let newPosition = displayToSite.getPlace();
-                    place(newPosition, marker);
-                }
-                break;
+        position = Number(position);    
 
-        }     
+        if (board[position] == null){
+            board[position] = marker;
+        } else {
+            // console.warn("The spot has already been filled. Try again");
+            place(newPosition, marker);
+        }
     }
     
 
     // returns array with [bool, winningMarker] if true
-    const checkWin = (marker1, marker2) => {
+    const checkWin = () => {
         // check each row, column, and cross for a win
         let inARow = 1;
         let marker;
@@ -96,13 +78,13 @@ const gameBoard = () => {
 
             if (inARow == rows) {
                 winningMarker = marker;
-                console.warn("Win by cross");
+                console.warn("Win by cross 1");
                 return [true, winningMarker];
             }
         }
         
         inARow = 1;
-        for (let j=rows+1; j<positions; j+=(rows-1)) {
+        for (let j=rows+1; j<positions-1; j+=(rows-1)) {
             marker = board[j];
             if (marker == board[j-(rows-1)] && marker != null) {
                 inARow++;
@@ -110,7 +92,7 @@ const gameBoard = () => {
 
             if (inARow == rows) {
                 winningMarker = marker;
-                console.warn("Win by cross");
+                console.warn("Win by cross 2");
                 return [true, winningMarker];
             }
         }
@@ -143,37 +125,13 @@ const Player = (name, marker, turn) => {
 };
 
 const displayController = (() => {
-    const showBoard = (board) => {
-        console.log(board);
-    }
+    const setupForm = document.querySelector("form");
+    let p1InputName;
+    let p2InputName;
+    let p1InputTurn;
+    let p2InputTurn;
 
-    const win = (player) => {
-        let name = player.getPlayerName();
-        console.log(name + ' has won the game!');
-    }
-
-    const tie = () => {
-        console.log("It's a tie!");
-    }
-
-    const turn = (player) => {
-        let name = player.getPlayerName();
-        console.log('It is ' + name + "'s turn.");
-    }
-
-    function getPlace () {
-        const placePosition = prompt('Place your marker (1-9): ');
-        console.log(`You entered: ${placePosition}`);
-        return placePosition-1;
-    }
-
-    return { showBoard, win, tie, turn, getPlace };
-})();
-
-// display:
-// when hover show a light version of an X or O depending on turn
-// make display work with any num of positions (optional)
-const displayToSite = (() => {
+    const gameDiv = document.querySelector(".game");
     const gameGrid = document.getElementsByClassName("game-grid");
     const box1 = document.getElementById("box1");
     const box2 = document.getElementById("box2");
@@ -185,11 +143,53 @@ const displayToSite = (() => {
     const box8 = document.getElementById("box8");
     const box9 = document.getElementById("box9");
     const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
+    const restartButton = document.querySelector(".restart-button");
     const gameResultText = document.querySelector(".game-result");
 
+    const getP1InputName = () => { return p1InputName; }
+    const getP2InputName = () => { return p2InputName; }
+    const getP1InputTurn = () => { return p1InputTurn; }
+    const getP2InputTurn = () => { return p2InputTurn; }
+
+    const setupGame = () => {
+        gameDiv.classList.remove("hide");
+        setupForm.classList.add("hide");
+
+        p1InputName = document.getElementsByName('player1_name')[0].value;
+        p2InputName = document.getElementsByName('player2_name')[0].value;
+        const radioButtons = document.getElementsByName('who_starts');
+        let inputFirstTurn;
+
+        if (!p1InputName || !p2InputName) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        for (let i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked) {
+                inputFirstTurn = radioButtons[i].value;
+                break;
+            }
+        }
+
+        if (inputFirstTurn == 'player1') {
+            p1InputTurn = true;
+            p2InputTurn = false;
+        } else {
+            p1InputTurn = false;
+            p2InputTurn = true;
+        }
+
+        game.play();
+    }
+
+    const showForm = () => {
+        gameDiv.classList.add("hide");
+        setupForm.classList.remove("hide");
+    }
+
     const updateBoard = (board) => {
-        // to test
-        // board = ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'O'];
+        console.log(board);
 
         for (let i=0; i<boxIds.length; i++) {
             while (boxIds[i].firstChild) {
@@ -208,100 +208,46 @@ const displayToSite = (() => {
                 oImg.src = "images/alpha-o.svg";
                 oImg.alt = "O";
                 boxIds[i].appendChild(oImg);
-            } else {
-                // do nothing
             }
         }
     }
 
     const win = (player) => {
         let name = player.getPlayerName();
-        // console.log(name + ' has won the game!');
         gameResultText.textContent = name + ' has won the game!';
+        console.log(name + ' has won the game!');
     }
 
     const tie = () => {
-        // console.log("It's a tie!");
         gameResultText.textContent = "It's a tie!";
+        console.log("It's a tie!");
     }
 
     const turn = (player) => {
         let name = player.getPlayerName();
-        // console.log('It is ' + name + "'s turn.");
         gameResultText.textContent = 'It is ' + name + "'s turn.";
+        console.log('It is ' + name + "'s turn.");
     }
 
-    // function getPlace () {
-    //     // let position;
-    //     // boxIds.forEach((box, index) => {
-    //     //     box.addEventListener("click", () => {
-    //     //         position = index;
-    //     //     })
-    //     // });
-
-    //     // return position;
-    // }
-    const getPlace = () => { 
-        boxIds.forEach((box, index) => {
-            box.addEventListener("click", () => {
-                return index;
-            });
-        });
-    }
-
-    return { updateBoard, win, tie, turn, getPlace, boxIds };
+    return { setupGame, showForm, updateBoard, win, tie, turn, restartButton, boxIds, getP1InputName, getP2InputName, getP1InputTurn, getP2InputTurn };
 })();
 
 const game = (() => {
-    let player1 = Player("Ali", "X", true);
-    let player1name = player1.getPlayerName();
-    let player1marker = player1.getPlayerMarker();
-    let player1turn = player1.getPlayerTurn();
+    let player1;
+    let player1name;
+    let player1marker;
+    let player1turn;
 
-    let player2 = Player("Spider", "O", false);
-    let player2name = player2.getPlayerName();
-    let player2marker = player2.getPlayerMarker();
-    let player2turn = player2.getPlayerTurn();
+    let player2;
+    let player2name;
+    let player2marker;
+    let player2turn;
 
-    let board = gameBoard();
-    let boardArray = board.getBoard();
-    let winMarker = board.getWinningMarker();
+    let board;
+    let boardArray;
+    let winMarker;
     let placePosition;
-    let gameOver = false;
-
-
-    function play() {
-        if (gameOver[0]) {
-            newGame();
-        } else {
-            playTurn();
-            checkGameOver();
-            if (winMarker == undefined) {
-                play();
-            } else {
-                endGame();
-            }
-        }
-    }
-
-    const playTurn = () => {
-        if (player1turn == true) {
-            displayController.turn(player1);
-            displayToSite.turn(player1);
-            updateBoardGetPosition();
-            board.place(placePosition, player1marker);
-            switchTurns();
-        } else if (player2turn == true) {
-            displayController.turn(player2);
-            displayToSite.turn(player2);
-            updateBoardGetPosition();
-            board.place(placePosition, player2marker);
-            switchTurns();
-        } else {
-            console.error("No player has a turn!");
-        }
-
-    }
+    let gameOver;
 
     const checkGameOver = () => {
         gameOver = board.checkWin();
@@ -310,95 +256,80 @@ const game = (() => {
         }
     }
 
-    const updateBoardGetPosition = () => {
-        displayController.showBoard(boardArray);
-        displayToSite.updateBoard(boardArray);
-        placePosition = displayController.getPlace();
-        // placePosition = displayToSite.getPlace();
-    }
-
     const switchTurns = () => {
         player1turn = !player1turn;
         player2turn = !player2turn;
     }
 
     const endGame = (() => {
-        // displayController.showBoard(boardArray);
-        // displayToSite.updateBoard(boardArray);
         if (winMarker == player1marker) {
-            // displayController.win(player1);
-            // displayToSite.updateBoard(boardArray);
-            displayToSite.win(player1);
+            displayController.win(player1);
         } else if (winMarker == player2marker) {
-            // displayController.win(player2);
-            // displayToSite.updateBoard(boardArray);
-            displayToSite.win(player2);
+            displayController.win(player2);
         } else if (winMarker == 'tie') {
-            // displayController.tie();
-            // displayToSite.updateBoard(boardArray);
-            displayToSite.tie();
+            displayController.tie();
         } else {
             console.error("There is no winner or tie?");
         }
     })
 
-    const newGame = (() => {
-        board.empty();
-        // resetGameVariables(player1name, player1marker, player1turn,
-        //                    player2name, player2marker, player2turn);
-        resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
-
-        play();
+    const newGame = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
+        console.warn("Starting new gane");
+        resetGameVariables(p1name, p1marker, p1turn, p2name, p2marker, p2turn);
+        displayController.updateBoard(boardArray);
+        showTurn();
     });
 
-    const playTurnSite = ((player, playerMarker) => {
-        // displayController.turn(player);
-        // displayToSite.turn(player);
+    const showTurn = () => {
+        if (player1turn == true) {
+            displayController.turn(player1);
+        } else if (player2turn == true) {
+            displayController.turn(player2);
+        } else {
+            console.error("No player has a turn!");
+        }
+    }
+
+    const playTurn = ((player, playerMarker) => {
         board.place(placePosition, playerMarker);
-        // displayController.showBoard(boardArray);
-        displayToSite.updateBoard(boardArray);
+        displayController.updateBoard(boardArray);
         switchTurns();
         checkGameOver();
-        if (winMarker != undefined) {
+        if (winMarker == undefined) {
+            showTurn();
+        } else {
             endGame();
-            playInSite();
         }
     })
 
-    const playInSite = (() => {
-        board.empty();
-        displayToSite.updateBoard(boardArray);
-        resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
-        // if (player1turn == true) {
-        //     // displayController.turn(player);
-        //     displayToSite.turn(player1);
-        // } else if (player2turn == true) {
-        //     // displayController.turn(player);
-        //     displayToSite.turn(player2);
-        // } else {
-        //     console.error("No player has a turn!");
-        // }
-        
-        displayToSite.boxIds.forEach((box, index) => {
-            box.addEventListener("click", () => {
-                placePosition = index;
+    const boxClicked = (index) => {
+        placePosition = index;
+    
+        if (player1turn == true) {
+            playTurn(player1, player1marker);
+        } else if (player2turn == true) {
+            playTurn(player2, player2marker);
+        } else {
+            console.error("No player has a turn!");
+        }
+    };
 
-                if (player1turn == true) {
-                    playTurnSite(player1, player1marker);
-                    // displayController.turn(player);
-                    displayToSite.turn(player2);
-                } else if (player2turn == true) {
-                    playTurnSite(player2, player2marker);
-                    displayToSite.turn(player1);
-                } else {
-                    console.error("No player has a turn!");
+    const play = (() => {
+        newGame(displayController.getP1InputName(), "X", displayController.getP1InputTurn(), 
+                displayController.getP2InputName(), "O", displayController.getP2InputTurn());
+
+        displayController.restartButton.addEventListener("click", () => {
+            // newGame();
+            displayController.showForm();
+        });
+
+        displayController.boxIds.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                if (winMarker == undefined) {
+                    boxClicked(index);
                 }
             });
         });
-
-        
-
-        // play();
     });
 
     const resetGameVariables = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
@@ -411,15 +342,11 @@ const game = (() => {
         player2marker = player2.getPlayerMarker();
         player2turn = player2.getPlayerTurn();
         board = gameBoard();
+        board.empty();
         boardArray = board.getBoard();
         winMarker = board.getWinningMarker();
         gameOver = false;
     }) 
 
-    return { play, newGame, boardArray, playInSite };
+    return { play };
 })();
-
-document.addEventListener('DOMContentLoaded', () => {
-    // game.play();
-    game.playInSite();
-});
