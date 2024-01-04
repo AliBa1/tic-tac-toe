@@ -38,7 +38,7 @@ const gameBoard = () => {
         if (board[position] == null){
             board[position] = marker;
         } else {
-            console.warn("The spot has already been filled. Try again");
+            // console.warn("The spot has already been filled. Try again");
             place(newPosition, marker);
         }
     }
@@ -97,13 +97,13 @@ const gameBoard = () => {
 
             if (inARow == rows) {
                 winningMarker = marker;
-                console.warn("Win by cross");
+                console.warn("Win by cross 1");
                 return [true, winningMarker];
             }
         }
         
         inARow = 1;
-        for (let j=rows+1; j<positions; j+=(rows-1)) {
+        for (let j=rows+1; j<positions-1; j+=(rows-1)) {
             marker = board[j];
             if (marker == board[j-(rows-1)] && marker != null) {
                 inARow++;
@@ -111,7 +111,7 @@ const gameBoard = () => {
 
             if (inARow == rows) {
                 winningMarker = marker;
-                console.warn("Win by cross");
+                console.warn("Win by cross 2");
                 return [true, winningMarker];
             }
         }
@@ -144,6 +144,13 @@ const Player = (name, marker, turn) => {
 };
 
 const displayController = (() => {
+    const setupForm = document.querySelector("form");
+    let p1InputName;
+    let p2InputName;
+    let p1InputTurn;
+    let p2InputTurn;
+
+    const gameDiv = document.querySelector(".game");
     const gameGrid = document.getElementsByClassName("game-grid");
     const box1 = document.getElementById("box1");
     const box2 = document.getElementById("box2");
@@ -157,6 +164,53 @@ const displayController = (() => {
     const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
     const restartButton = document.querySelector(".restart-button");
     const gameResultText = document.querySelector(".game-result");
+
+    const getP1InputName = () => { return p1InputName; }
+    const getP2InputName = () => { return p2InputName; }
+    const getP1InputTurn = () => { return p1InputTurn; }
+    const getP2InputTurn = () => { return p2InputTurn; }
+
+    const setupGame = () => {
+        gameDiv.classList.remove("hide");
+        setupForm.classList.add("hide");
+
+        p1InputName = document.getElementsByName('player1_name')[0].value;
+        p2InputName = document.getElementsByName('player2_name')[0].value;
+        const radioButtons = document.getElementsByName('who_starts');
+        let inputFirstTurn;
+
+        if (!p1InputName || !p2InputName) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        for (let i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked) {
+                inputFirstTurn = radioButtons[i].value;
+                break;
+            }
+        }
+
+        if (inputFirstTurn == 'player1') {
+            p1InputTurn = true;
+            p2InputTurn = false;
+        } else {
+            p1InputTurn = false;
+            p2InputTurn = true;
+        }
+        
+        console.warn(p1InputName);
+        console.warn(p1InputTurn);
+        console.warn(p2InputName);
+        console.warn(p2InputTurn);
+
+        game.play();
+    }
+
+    const showForm = () => {
+        gameDiv.classList.add("hide");
+        setupForm.classList.remove("hide");
+    }
 
     const updateBoard = (board) => {
         console.log(board);
@@ -199,25 +253,40 @@ const displayController = (() => {
         console.log('It is ' + name + "'s turn.");
     }
 
-    return { updateBoard, win, tie, turn, restartButton, boxIds };
+    return { setupGame, showForm, updateBoard, win, tie, turn, restartButton, boxIds, getP1InputName, getP2InputName, getP1InputTurn, getP2InputTurn };
 })();
 
 const game = (() => {
-    let player1 = Player("Ali", "X", true);
-    let player1name = player1.getPlayerName();
-    let player1marker = player1.getPlayerMarker();
-    let player1turn = player1.getPlayerTurn();
+    // let player1 = Player("Ali", "X", true);
+    // let player1name = player1.getPlayerName();
+    // let player1marker = player1.getPlayerMarker();
+    // let player1turn = player1.getPlayerTurn();
 
-    let player2 = Player("Spider", "O", false);
-    let player2name = player2.getPlayerName();
-    let player2marker = player2.getPlayerMarker();
-    let player2turn = player2.getPlayerTurn();
+    // let player2 = Player("Spider", "O", false);
+    // let player2name = player2.getPlayerName();
+    // let player2marker = player2.getPlayerMarker();
+    // let player2turn = player2.getPlayerTurn();
 
-    let board = gameBoard();
-    let boardArray = board.getBoard();
-    let winMarker = board.getWinningMarker();
+    // let board = gameBoard();
+    // let boardArray = board.getBoard();
+    // let winMarker = board.getWinningMarker();
+    // let placePosition;
+    // let gameOver = false;
+    let player1;
+    let player1name;
+    let player1marker;
+    let player1turn;
+
+    let player2;
+    let player2name;
+    let player2marker;
+    let player2turn;
+
+    let board;
+    let boardArray;
+    let winMarker;
     let placePosition;
-    let gameOver = false;
+    let gameOver;
 
     const checkGameOver = () => {
         gameOver = board.checkWin();
@@ -243,9 +312,9 @@ const game = (() => {
         }
     })
 
-    const newGame = (() => {
+    const newGame = ((p1name, p1marker, p1turn, p2name, p2marker, p2turn) => {
         console.warn("Starting new gane");
-        resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
+        resetGameVariables(p1name, p1marker, p1turn, p2name, p2marker, p2turn);
         displayController.updateBoard(boardArray);
         showTurn();
     });
@@ -285,9 +354,13 @@ const game = (() => {
     };
 
     const play = (() => {
-        newGame();
+        console.warn(displayController.getP1InputName());
+        newGame(displayController.getP1InputName(), "X", displayController.getP1InputTurn(), 
+                displayController.getP2InputName(), "O", displayController.getP2InputTurn());
+
         displayController.restartButton.addEventListener("click", () => {
-            newGame();
+            // newGame();
+            displayController.showForm();
         });
 
         displayController.boxIds.forEach((box, index) => {
@@ -315,9 +388,9 @@ const game = (() => {
         gameOver = false;
     }) 
 
-    return { play  };
+    return { play };
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
-    game.play();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     game.play();
+// });

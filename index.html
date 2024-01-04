@@ -7,29 +7,55 @@
     <title>Tic Tac Toe</title>
 </head>
 <body>
-    <!-- <form action="#" method="get">
-        <p>Set Up the Game</p>
+    <form action="#" method="get">
+        <p>Game Setup</p>
 
+        <fieldset>
+            <div class="form-field">
+                <label for="player1_name">Player 1 Name</label>
+                <input type="text" name="player1_name" id="player1_name" required>
+            </div>
+            
+            <div class="form-field">
+                <label for="player2_name">Player 2 Name</label>
+                <input type="text" name="player2_name" id="player2_name" required>
+            </div>
+        </fieldset>
 
-    </form> -->
+        <fieldset class="who-starts">
+            <!-- <label for="book_read">Have you read this book?</label> -->
+            <legend>Who goes first?</legend>
 
-    <button class="restart-button">Restart</button>
+            <label for="player1_turn">Player 1</label>
+            <input type="radio" name="who_starts" id="player1_turn" value="player1">
 
-    <div class="game-grid">
-        <div class="grid-box" id="box1"></div>
-        <div class="grid-box" id="box2"></div>
-        <div class="grid-box" id="box3"></div>
-        <div class="grid-box" id="box4"></div>
-        <div class="grid-box" id="box5"></div>
-        <div class="grid-box" id="box6"></div>
-        <div class="grid-box" id="box7"></div>
-        <div class="grid-box" id="box8"></div>
-        <div class="grid-box" id="box9"></div>
+            <label for="player2_turn">Player 2</label>
+            <input type="radio" name="who_starts" id="player2_turn" value="player2">
+        </fieldset>
+
+        <button type="button" onclick="displayController.setupGame()">Start Game</button>
+    </form>
+
+    <div class="game hide">
+        <button class="restart-button">Restart</button>
+
+        <div class="game-grid">
+            <div class="grid-box" id="box1"></div>
+            <div class="grid-box" id="box2"></div>
+            <div class="grid-box" id="box3"></div>
+            <div class="grid-box" id="box4"></div>
+            <div class="grid-box" id="box5"></div>
+            <div class="grid-box" id="box6"></div>
+            <div class="grid-box" id="box7"></div>
+            <div class="grid-box" id="box8"></div>
+            <div class="grid-box" id="box9"></div>
+        </div>
+
+        <div class="game-result">
+            Place a marker to start
+        </div>
     </div>
-
-    <div class="game-result">
-        Place a marker to start
-    </div>
+    
     
     <!-- <script src="script.js"></script> -->
     <script src="v2script.js"></script>
