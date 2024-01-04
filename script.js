@@ -1,4 +1,3 @@
-// fix game win
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
@@ -19,8 +18,8 @@ const gameBoard = () => {
         switch (true) {
             case (position>positions-1 || position<0):
                 console.warn("The position you entered is out of range. Try again");
-                let newPosition = displayController.getPlace();
-                // let newPosition = displayToSite.placeMarker();
+                // let newPosition = displayController.getPlace();
+                let newPosition = displayToSite.placeMarker();
                 place(newPosition, marker);
                 break;
             default:
@@ -29,8 +28,8 @@ const gameBoard = () => {
                 } else {
                     console.warn("The spot has already been filled. Try again");
                     
-                    let newPosition = displayController.getPlace();
-                    // let newPosition = displayToSite.placeMarker();
+                    // let newPosition = displayController.getPlace();
+                    let newPosition = displayToSite.placeMarker();
                     place(newPosition, marker);
                 }
                 break;
@@ -227,7 +226,7 @@ const displayToSite = (() => {
     }
 
     function placeMarker () {
-        let position = null;
+        let position;
         gameResultText.textContent += " Click on a square to place marker";
         boxIds.forEach((box, index) => {
             box.addEventListener("click", () => {
@@ -235,10 +234,7 @@ const displayToSite = (() => {
             })
         });
 
-        if (position !== null) {
-            return position;
-        }
-
+        return position;
     }
 
     return { updateBoard, win, tie, turn, placeMarker };
@@ -306,8 +302,8 @@ const game = (() => {
     const updateBoardGetPosition = () => {
         displayController.showBoard(boardArray);
         displayToSite.updateBoard(boardArray);
-        placePosition = displayController.getPlace();
-        // placePosition = displayToSite.placeMarker();
+        // placePosition = displayController.getPlace();
+        placePosition = displayToSite.placeMarker();
 
     }
 
@@ -362,3 +358,7 @@ const game = (() => {
     return { play, newGame, boardArray };
 })();
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Run the game when the DOM is fully loaded
+    game.play();
+});
