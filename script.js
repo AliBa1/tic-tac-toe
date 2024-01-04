@@ -226,18 +226,25 @@ const displayToSite = (() => {
         gameResultText.textContent = 'It is ' + name + "'s turn.";
     }
 
-    function getPlace () {
-        // let position;
-        // boxIds.forEach((box, index) => {
-        //     box.addEventListener("click", () => {
-        //         position = index;
-        //     })
-        // });
+    // function getPlace () {
+    //     // let position;
+    //     // boxIds.forEach((box, index) => {
+    //     //     box.addEventListener("click", () => {
+    //     //         position = index;
+    //     //     })
+    //     // });
 
-        // return position;
+    //     // return position;
+    // }
+    const getPlace = () => { 
+        boxIds.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                return index;
+            });
+        });
     }
 
-    return { updateBoard, win, tie, turn, getPlace };
+    return { updateBoard, win, tie, turn, getPlace, boxIds };
 })();
 
 const game = (() => {
@@ -336,6 +343,7 @@ const game = (() => {
         // resetGameVariables(player1name, player1marker, player1turn,
         //                    player2name, player2marker, player2turn);
         resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
+
         play();
     });
 
@@ -358,6 +366,5 @@ const game = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Run the game when the DOM is fully loaded
     game.play();
 });
