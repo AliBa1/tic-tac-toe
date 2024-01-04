@@ -32,6 +32,10 @@ body {
     background-color: rgba(0, 255, 255, 0.361);
 }
 
+.grid-box-done:hover {
+    
+}
+
 .X-img, .O-img{
     width: 100%;
     height: 100%;
