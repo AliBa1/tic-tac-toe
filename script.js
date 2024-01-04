@@ -1,5 +1,7 @@
 // fix game end in site
 // fix placing object in same square multiple times
+// could have reset button
+// clean up code
 const gameBoard = () => {
     const rows = 3;
     const columns = rows;
