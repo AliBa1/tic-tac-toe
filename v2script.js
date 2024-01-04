@@ -1,6 +1,5 @@
 // fix game end in site
 // fix placing object in same square multiple times
-// could have reset button
 // clean up code
 const gameBoard = () => {
     const rows = 3;
@@ -27,6 +26,7 @@ const gameBoard = () => {
                 place(newPosition, marker);
                 break;
             default:
+                console.warn(board[position]);
                 if (board[position] == null){
                     board[position] = marker;
                 } else {
@@ -142,7 +142,6 @@ const Player = (name, marker, turn) => {
 };
 
 // display:
-// when hover show a light version of an X or O depending on turn
 // make display work with any num of positions (optional)
 const displayController = (() => {
     const gameGrid = document.getElementsByClassName("game-grid");
@@ -156,6 +155,7 @@ const displayController = (() => {
     const box8 = document.getElementById("box8");
     const box9 = document.getElementById("box9");
     const boxIds = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
+    const restartButton = document.querySelector(".restart-button");
     const gameResultText = document.querySelector(".game-result");
 
     const updateBoard = (board) => {
@@ -203,7 +203,7 @@ const displayController = (() => {
         console.log('It is ' + name + "'s turn.");
     }
 
-    return { updateBoard, win, tie, turn, boxIds };
+    return { updateBoard, win, tie, turn, restartButton, boxIds };
 })();
 
 const game = (() => {
@@ -287,12 +287,16 @@ const game = (() => {
     })
 
     const newGame = (() => {
+        // displayController.boxIds.forEach((box, index) => {
+        //     box.removeEventListener("click", () => handleBoxClick(index));
+        // });
+
         console.warn("Starting new gane");
         resetGameVariables(player1name, player1marker, true, player2name, player2marker, false);
         displayController.updateBoard(boardArray);
         showTurn();
 
-        play();
+        // play();
     });
 
     const showTurn = () => {
@@ -318,21 +322,39 @@ const game = (() => {
         }
     })
 
-    const play = (() => {
-        displayController.boxIds.forEach((box, index) => {
-            box.addEventListener("click", () => {
-                placePosition = index;
+    const boxClicked = (index) => {
+        placePosition = index;
+    
+        if (player1turn == true) {
+            playTurn(player1, player1marker);
+        } else if (player2turn == true) {
+            playTurn(player2, player2marker);
+        } else {
+            console.error("No player has a turn!");
+        }
+    };
 
-                if (player1turn == true) {
-                    playTurn(player1, player1marker);
-                } else if (player2turn == true) {
-                    playTurn(player2, player2marker);
-                } else {
-                    console.error("No player has a turn!");
-                }
-            });
+    const play = (() => {
+        displayController.restartButton.addEventListener("click", () => {
+            newGame();
         });
 
+        // displayController.boxIds.forEach((box, index) => {
+        //     box.addEventListener("click", () => {
+        //         placePosition = index;
+
+        //         if (player1turn == true) {
+        //             playTurn(player1, player1marker);
+        //         } else if (player2turn == true) {
+        //             playTurn(player2, player2marker);
+        //         } else {
+        //             console.error("No player has a turn!");
+        //         }
+        //     });
+        // });
+        displayController.boxIds.forEach((box, index) => {
+            box.addEventListener("click", () => boxClicked(index));
+        });
         
 
         // play();
@@ -358,5 +380,5 @@ const game = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-    game.newGame();
+    game.play();
 });

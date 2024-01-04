@@ -15,13 +15,26 @@ body {
     font-family: 'Press Start 2P', sans-serif;
 }
 
+.restart-button {
+    background-color: rgb(255, 85, 0);
+    font-family: 'Press Start 2P', sans-serif;
+    color: white;
+    border-radius: 8px;
+    padding: 12px 32px;
+    font-size: 1rem;
+    text-align: center;
+    display: block;
+    margin: 2rem auto 0 auto;
+
+}
+
 .game-grid {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr;
     width: 32rem;
     height: 32rem;
-    margin: 8rem auto 0 auto;
+    margin: 2rem auto 0 auto;
 }
 
 .grid-box {
@@ -30,10 +43,6 @@ body {
 
 .grid-box:hover {
     background-color: rgba(0, 255, 255, 0.361);
-}
-
-.grid-box-done:hover {
-    
 }
 
 .X-img, .O-img{
