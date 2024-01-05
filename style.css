@@ -33,7 +33,7 @@ fieldset {
     display: flex;
     margin-top: 2rem;
     justify-content: space-between;
-    width: 32rem;
+    width: min(28rem, 32rem);
     height: 4rem;
 }
 
